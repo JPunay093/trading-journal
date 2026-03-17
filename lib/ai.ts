@@ -19,20 +19,21 @@ export async function analyzeTrades(tradesData: any[]) {
     ).toFixed(2),
   }));
 
-  const prompt = `Analyze this trading journal data and provide insights:
+  const prompt = `Analyze this trading journal data and provide detailed insights:
 
 ${JSON.stringify(anonymizedData, null, 2)}
 
 Provide:
-1. Win rate
-2. Best trades
-3. Patterns in losses
-4. Risk observations
-5. Improvements`;
+1. Win rate analysis
+2. Best and worst performing trades
+3. Common patterns in winning trades
+4. Common patterns in losing trades
+5. Risk management observations
+6. Specific recommendations for improvement`;
 
   try {
     const response = await fetch(
-      "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.1",
+      "https://api-inference.huggingface.co/models/mistralai/Mistral-Small-4-119B-2603",
       {
         headers: {
           Authorization: `Bearer ${apiKey}`,
@@ -42,7 +43,7 @@ Provide:
         body: JSON.stringify({
           inputs: prompt,
           parameters: {
-            max_new_tokens: 400,
+            max_new_tokens: 500,
             temperature: 0.7,
           },
         }),
