@@ -178,7 +178,7 @@ export default function Analysis() {
                         {...props}
                       />
                     ),
-                    code: ({ node, inline, ...props }) =>
+                    code: ({ node, inline, ...props }: any) =>
                       inline ? (
                         <code
                           className="bg-gray-100 px-2 py-1 rounded text-sm font-mono text-red-600"
