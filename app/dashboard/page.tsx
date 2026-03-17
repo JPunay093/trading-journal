@@ -172,7 +172,7 @@ export default function Dashboard() {
                   className="px-3 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 font-medium capitalize"
                 >
                   {p === "week"
-                    ? "This Week"
+                    ? "Current Week"
                     : p === "month"
                       ? "This Month"
                       : p === "all"
