@@ -63,8 +63,8 @@ export default function NewTrade() {
           render={({ field }) => (
             <DatePicker
               selected={field.value}
-              onChange={(date) => field.onChange(date)}
-              onChangeRaw={(e) => {
+              onChange={(date: Date | null) => field.onChange(date)}
+              onChangeRaw={(e: any) => {
                 const date = new Date(e.currentTarget.value);
                 if (!isNaN(date.getTime())) {
                   field.onChange(date);
