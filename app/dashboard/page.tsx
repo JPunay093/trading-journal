@@ -102,7 +102,7 @@ export default function Dashboard() {
     }
   };
 
-  const chartData = tradesWithPL.reduce((acc: any[], trade) => {
+  const chartData = filteredTrades.reduce((acc: any[], trade) => {
     const lastTotal = acc.length > 0 ? acc[acc.length - 1].cumulative : 0;
     acc.push({
       date: trade.date,
@@ -276,7 +276,7 @@ export default function Dashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {tradesWithPL.length === 0 ? (
+                  {filteredTrades.length === 0 ? (
                     <tr>
                       <td
                         colSpan={8}
