@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { supabase } from "@/lib/supabaseClient";
 import Link from "next/link";
