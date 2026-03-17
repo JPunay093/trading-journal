@@ -1,5 +1,12 @@
 export async function analyzeTrades(tradesData: any[]) {
-  // Anonymize sensitive data before sending
+  const apiKey = process.env.NEXT_PUBLIC_HF_API_KEY;
+
+  if (!apiKey) {
+    throw new Error(
+      "Hugging Face API key is not configured. Please set NEXT_PUBLIC_HF_API_KEY in environment variables.",
+    );
+  }
+
   const anonymizedData = tradesData.map((trade) => ({
     date: trade.date,
     direction: trade.direction,
@@ -12,45 +19,57 @@ export async function analyzeTrades(tradesData: any[]) {
     ).toFixed(2),
   }));
 
-  const prompt = `Analyze this trading journal data and provide insights about the trader's performance and patterns:
+  const prompt = `Analyze this trading journal data and provide insights:
 
 ${JSON.stringify(anonymizedData, null, 2)}
 
-Please provide:
-1. Win rate analysis
-2. Best and worst performing trades
-3. Common patterns in winning and losing trades
-4. Risk management observations
-5. Specific recommendations for improvement
-6. Overall trading psychology insights`;
+Provide:
+1. Win rate
+2. Best trades
+3. Patterns in losses
+4. Risk observations
+5. Improvements`;
 
   try {
     const response = await fetch(
       "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.1",
       {
         headers: {
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_HF_API_KEY}`,
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
         },
         method: "POST",
         body: JSON.stringify({
           inputs: prompt,
           parameters: {
-            max_new_tokens: 500,
+            max_new_tokens: 400,
             temperature: 0.7,
           },
         }),
       },
     );
 
-    const result = await response.json();
-
-    if (result.error) {
-      throw new Error(result.error);
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("HF API Error:", errorData);
+      throw new Error(
+        `API Error: ${response.status} - ${errorData.error || "Unknown error"}`,
+      );
     }
 
-    return result[0].generated_text || "Unable to generate analysis";
-  } catch (error) {
+    const result = await response.json();
+
+    if (!result[0]?.generated_text) {
+      throw new Error(
+        "No response generated. Model might be loading, try again in a moment.",
+      );
+    }
+
+    return result[0].generated_text;
+  } catch (error: any) {
     console.error("AI Analysis error:", error);
-    throw error;
+    throw new Error(
+      error.message || "Failed to analyze trades. Check console for details.",
+    );
   }
 }
