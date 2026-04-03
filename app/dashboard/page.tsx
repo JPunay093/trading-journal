@@ -36,6 +36,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [filterFrom, setFilterFrom] = useState("");
   const [filterTo, setFilterTo] = useState("");
+  const [editingTrade, setEditingTrade] = useState<Trade | null>(null);
 
   // Load user + trades
   useEffect(() => {
@@ -111,6 +112,28 @@ export default function Dashboard() {
     });
     return acc;
   }, []);
+
+  const handleEditSave = async () => {
+    if (!editingTrade) return;
+    const { error } = await supabase
+      .from("trades")
+      .update({
+        date: editingTrade.date,
+        asset: editingTrade.asset,
+        direction: editingTrade.direction,
+        entry_price: editingTrade.entry_price,
+        exit_price: editingTrade.exit_price,
+        quantity: editingTrade.quantity,
+        notes: editingTrade.notes,
+      })
+      .eq("id", editingTrade.id);
+    if (!error) {
+      setTrades((prev) =>
+        prev.map((t) => (t.id === editingTrade.id ? editingTrade : t))
+      );
+      setEditingTrade(null);
+    }
+  };
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this trade?")) return;
@@ -340,12 +363,20 @@ export default function Dashboard() {
                           {trade.notes}
                         </td>
                         <td className="px-6 py-4">
-                          <button
-                            onClick={() => handleDelete(trade.id)}
-                            className="text-red-500 hover:text-red-700 text-sm font-medium"
-                          >
-                            Delete
-                          </button>
+                          <div className="flex gap-3">
+                            <button
+                              onClick={() => setEditingTrade(trade)}
+                              className="text-blue-500 hover:text-blue-700 text-sm font-medium"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDelete(trade.id)}
+                              className="text-red-500 hover:text-red-700 text-sm font-medium"
+                            >
+                              Delete
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))
@@ -356,6 +387,106 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+      {/* Edit Modal */}
+      {editingTrade && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-bold text-gray-900">Edit Trade</h2>
+              <button
+                onClick={() => setEditingTrade(null)}
+                className="text-gray-500 hover:text-gray-700 text-sm font-medium"
+              >
+                ✕ Cancel
+              </button>
+            </div>
+            <div className="space-y-4">
+              <input
+                type="date"
+                value={editingTrade.date}
+                onChange={(e) =>
+                  setEditingTrade({ ...editingTrade, date: e.target.value })
+                }
+                className="w-full border border-gray-300 p-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+              <input
+                placeholder="Asset"
+                value={editingTrade.asset}
+                onChange={(e) =>
+                  setEditingTrade({ ...editingTrade, asset: e.target.value })
+                }
+                className="w-full border border-gray-300 p-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+              <select
+                value={editingTrade.direction}
+                onChange={(e) =>
+                  setEditingTrade({
+                    ...editingTrade,
+                    direction: e.target.value as "buy" | "sell",
+                  })
+                }
+                className="w-full border border-gray-300 p-3 rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
+              >
+                <option value="buy">Buy (Long)</option>
+                <option value="sell">Sell (Short)</option>
+              </select>
+              <input
+                type="number"
+                step="0.01"
+                placeholder="Entry Price"
+                value={editingTrade.entry_price}
+                onChange={(e) =>
+                  setEditingTrade({
+                    ...editingTrade,
+                    entry_price: parseFloat(e.target.value),
+                  })
+                }
+                className="w-full border border-gray-300 p-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+              <input
+                type="number"
+                step="0.01"
+                placeholder="Exit Price"
+                value={editingTrade.exit_price}
+                onChange={(e) =>
+                  setEditingTrade({
+                    ...editingTrade,
+                    exit_price: parseFloat(e.target.value),
+                  })
+                }
+                className="w-full border border-gray-300 p-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+              <input
+                type="number"
+                step="0.01"
+                placeholder="Lot Size"
+                value={editingTrade.quantity}
+                onChange={(e) =>
+                  setEditingTrade({
+                    ...editingTrade,
+                    quantity: parseFloat(e.target.value),
+                  })
+                }
+                className="w-full border border-gray-300 p-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+              <textarea
+                placeholder="Notes / Strategy"
+                value={editingTrade.notes}
+                onChange={(e) =>
+                  setEditingTrade({ ...editingTrade, notes: e.target.value })
+                }
+                className="w-full border border-gray-300 p-3 rounded-lg h-24 text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+              <button
+                onClick={handleEditSave}
+                className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-medium"
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </ProtectedRoute>
   );
 }
