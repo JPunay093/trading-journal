@@ -114,7 +114,8 @@ export default function NewTrade() {
         />
         <input
           type="number"
-          placeholder="Quantity / Lots"
+          step="0.01"
+          placeholder="Lot Size (e.g. 0.1)"
           {...register("quantity")}
           className="w-full border border-gray-300 p-3 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500"
           required
