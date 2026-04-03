@@ -47,7 +47,8 @@ export default function NewTrade() {
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white rounded-xl shadow-md mt-10 relative">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 flex items-start justify-center">
+    <div className="w-full max-w-md bg-white rounded-xl shadow-md mt-4 sm:mt-10 p-6 relative">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900">New Trade</h1>
         <button
@@ -129,6 +130,7 @@ export default function NewTrade() {
           Save Trade
         </button>
       </form>
+    </div>
     </div>
   );
 }

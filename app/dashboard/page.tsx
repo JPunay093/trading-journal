@@ -126,29 +126,29 @@ export default function Dashboard() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-gray-50 p-6">
+      <div className="min-h-screen bg-gray-50 p-3 sm:p-6">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
-          <div className="flex justify-between items-center mb-8">
-            <h1 className="text-4xl font-bold text-gray-900">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
+            <h1 className="text-2xl sm:text-4xl font-bold text-gray-900">
               Trading Journal
             </h1>
-            <div className="flex gap-4">
+            <div className="flex flex-wrap gap-2 sm:gap-4">
               <Link
                 href="/new-trade"
-                className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium"
+                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-medium text-sm sm:text-base"
               >
                 + New Trade
               </Link>
               <Link
                 href="/analysis"
-                className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium"
+                className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-medium text-sm sm:text-base"
               >
                 📊 AI Analysis
               </Link>
               <button
                 onClick={handleLogout}
-                className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium"
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-medium text-sm sm:text-base"
               >
                 Logout
               </button>
@@ -164,7 +164,7 @@ export default function Dashboard() {
           )}
           {/* Date Filter */}
           <div className="flex flex-wrap gap-3 items-center mb-4">
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               {(["today", "week", "month", "all"] as const).map((p) => (
                 <button
                   key={p}

@@ -69,21 +69,21 @@ export default function Analysis() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-gray-50 p-6">
+      <div className="min-h-screen bg-gray-50 p-3 sm:p-6">
         <div className="max-w-4xl mx-auto">
-          <div className="flex justify-between items-center mb-8">
-            <h1 className="text-4xl font-bold text-gray-900">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-8">
+            <h1 className="text-2xl sm:text-4xl font-bold text-gray-900">
               AI Trade Analysis
             </h1>
             <Link
               href="/dashboard"
-              className="text-gray-500 hover:text-gray-700 text-sm font-medium"
+              className="text-gray-500 hover:text-gray-700 text-sm font-medium self-start sm:self-auto"
             >
               ✕ Back to Dashboard
             </Link>
           </div>
 
-          <div className="bg-white p-8 rounded-xl shadow-md mb-6">
+          <div className="bg-white p-4 sm:p-8 rounded-xl shadow-md mb-6">
             <p className="text-gray-600 mb-4">
               Analyze your trading patterns with AI. This will examine your
               trades and provide personalized insights.
@@ -107,7 +107,7 @@ export default function Analysis() {
           </div>
 
           {analysis && (
-            <div className="bg-white p-8 rounded-xl shadow-md">
+            <div className="bg-white p-4 sm:p-8 rounded-xl shadow-md">
               <h2 className="text-2xl font-semibold mb-4 text-gray-900">
                 Your Analysis
               </h2>
