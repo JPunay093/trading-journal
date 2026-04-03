@@ -112,6 +112,14 @@ export default function Dashboard() {
     return acc;
   }, []);
 
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this trade?")) return;
+    const { error } = await supabase.from("trades").delete().eq("id", id);
+    if (!error) {
+      setTrades((prev) => prev.filter((t) => t.id !== id));
+    }
+  };
+
   const handleExport = () => {
     const csv = Papa.unparse(tradesWithPL);
     const blob = new Blob([csv], { type: "text/csv" });
@@ -287,13 +295,14 @@ export default function Dashboard() {
                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wide">
                       Notes
                     </th>
+                    <th className="px-6 py-4"></th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredTrades.length === 0 ? (
                     <tr>
                       <td
-                        colSpan={8}
+                        colSpan={9}
                         className="text-center py-12 text-gray-500"
                       >
                         No trades yet. Add your first one!
@@ -329,6 +338,14 @@ export default function Dashboard() {
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-700">
                           {trade.notes}
+                        </td>
+                        <td className="px-6 py-4">
+                          <button
+                            onClick={() => handleDelete(trade.id)}
+                            className="text-red-500 hover:text-red-700 text-sm font-medium"
+                          >
+                            Delete
+                          </button>
                         </td>
                       </tr>
                     ))
