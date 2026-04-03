@@ -12,7 +12,16 @@ export async function POST(req: NextRequest) {
 
   const { trades } = await req.json();
 
-  const anonymizedData = trades.map((trade: any) => ({
+  if (!trades || trades.length === 0) {
+    return NextResponse.json(
+      { error: "No trades to analyze" },
+      { status: 400 }
+    );
+  }
+
+  const recentTrades = trades.slice(-100);
+
+  const anonymizedData = recentTrades.map((trade: any) => ({
     date: trade.date,
     direction: trade.direction,
     entry_price: trade.entry_price,
@@ -24,11 +33,19 @@ export async function POST(req: NextRequest) {
     ).toFixed(2),
   }));
 
-  const prompt = `Analyze this trading data and provide insights:
+  const prompt = `You are an expert trading coach analyzing a trader's journal.
 
+Trading data:
 ${JSON.stringify(anonymizedData, null, 2)}
 
-Provide: 1. Win rate 2. Best/worst trades 3. Patterns 4. Risk notes 5. Recommendations`;
+Provide a structured analysis with these sections:
+1. **Performance Summary** - Win rate, total P/L, average win vs average loss
+2. **Best & Worst Trades** - Identify the top 3 and bottom 3 trades with reasons
+3. **Patterns** - Any recurring behaviors (time of day, asset, direction bias)
+4. **Risk Assessment** - Are they over-leveraging? Inconsistent lot sizes?
+5. **Actionable Recommendations** - 3 specific things to improve next week
+
+Be direct and honest. Use numbers from the data to back every point.`;
 
   const response = await fetch(
     "https://api.groq.com/openai/v1/chat/completions",
@@ -41,7 +58,7 @@ Provide: 1. Win rate 2. Best/worst trades 3. Patterns 4. Risk notes 5. Recommend
       body: JSON.stringify({
         model: "llama-3.3-70b-versatile",
         messages: [{ role: "user", content: prompt }],
-        temperature: 0.7,
+        temperature: 0.3,
         max_tokens: 2000,
       }),
     }

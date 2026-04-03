@@ -1,4 +1,13 @@
-export async function analyzeTrades(tradesData: any[]) {
+type TradeInput = {
+  date: string;
+  direction: "buy" | "sell";
+  entry_price: number;
+  exit_price: number;
+  quantity: number;
+  notes?: string;
+};
+
+export async function analyzeTrades(tradesData: TradeInput[]) {
   const response = await fetch("/api/analyze", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
