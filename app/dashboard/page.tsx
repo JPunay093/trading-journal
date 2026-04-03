@@ -4,6 +4,7 @@ export const dynamic = "force-dynamic";
 
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { supabase } from "@/lib/supabaseClient";
+import { User } from "@supabase/supabase-js";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Papa from "papaparse";
@@ -30,7 +31,7 @@ type Trade = {
 
 export default function Dashboard() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [trades, setTrades] = useState<Trade[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterFrom, setFilterFrom] = useState("");
@@ -217,8 +218,15 @@ export default function Dashboard() {
             </div>
             <div className="bg-white p-6 rounded-2xl shadow">
               <p className="text-sm font-medium text-gray-500 mb-1">Win Rate</p>
-              <span className="text-3xl font-bold text-gray-900">— </span>
-              <span className="text-sm text-gray-400">(coming soon)</span>
+              <span className="text-3xl font-bold text-gray-900">
+                {filteredTrades.length > 0
+                  ? (
+                      (filteredTrades.filter((t) => t.pl > 0).length /
+                        filteredTrades.length) *
+                      100
+                    ).toFixed(1) + "%"
+                  : "—"}
+              </span>
             </div>
           </div>
 
@@ -292,7 +300,7 @@ export default function Dashboard() {
                       </td>
                     </tr>
                   ) : (
-                    tradesWithPL.map((trade) => (
+                    filteredTrades.map((trade) => (
                       <tr key={trade.id} className="border-t hover:bg-gray-50">
                         <td className="px-6 py-4 text-gray-800">
                           {trade.date}

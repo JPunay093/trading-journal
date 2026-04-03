@@ -4,6 +4,7 @@ export const dynamic = "force-dynamic";
 
 import { useRouter } from "next/navigation";
 import DatePicker from "react-datepicker";
+import toast from "react-hot-toast";
 import "react-datepicker/dist/react-datepicker.css";
 import { Controller, useForm } from "react-hook-form";
 import { supabase } from "../../lib/supabaseClient";
@@ -38,9 +39,9 @@ export default function NewTrade() {
     ]);
 
     if (error) {
-      alert("Error: " + error.message);
+      toast.error(error.message);
     } else {
-      alert("Trade saved! ✅");
+      toast.success("Trade saved!");
       reset();
       router.push("/dashboard");
     }
